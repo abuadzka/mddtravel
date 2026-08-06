@@ -1,4 +1,4 @@
-const CACHE_NAME = "mddtravel-dashboard-v4";
+const CACHE_NAME = "mddtravel-dashboard-v5";
 const ASSETS = [
   "./",
   "./index.html",
