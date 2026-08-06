@@ -1,4 +1,5 @@
 const SHEET_NAMES = ["leads", "jamaah", "bookings", "payments", "packages", "itinerary", "activity"];
+const SPREADSHEET_ID = "11-UBKsXjpfBvWXnqjbXfhLmj2V9rYP1zOrU0572GS7E";
 
 function doGet() {
   return jsonOutput({ ok: true, app: "MDD Travel Umrah Dashboard", data: readAll() });
@@ -19,7 +20,7 @@ function doPost(e) {
 }
 
 function setupWorkbook() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   SHEET_NAMES.forEach((name) => ensureSheet(ss, name));
   const settings = ensureSheet(ss, "settings");
   settings.getRange(1, 1, 4, 2).setValues([
@@ -31,7 +32,7 @@ function setupWorkbook() {
 }
 
 function readAll() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const data = {};
   SHEET_NAMES.forEach((name) => {
     const sheet = ensureSheet(ss, name);
@@ -53,7 +54,7 @@ function readAll() {
 }
 
 function writeAll(payload) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   SHEET_NAMES.forEach((name) => {
     const rows = Array.isArray(payload[name]) ? payload[name] : [];
     const sheet = ensureSheet(ss, name);
@@ -85,7 +86,7 @@ function ensureSheet(ss, name) {
 }
 
 function logSync(clientTime) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const settings = ensureSheet(ss, "settings");
   settings.getRange("D1:E1").setValues([["lastSync", new Date().toISOString()]]);
   settings.getRange("D2:E2").setValues([["clientTime", clientTime]]);
@@ -95,4 +96,8 @@ function jsonOutput(value) {
   return ContentService
     .createTextOutput(JSON.stringify(value))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSpreadsheet() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
 }

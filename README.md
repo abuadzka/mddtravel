@@ -16,6 +16,8 @@ Dashboard realtime untuk travel agen Umrah, siap dipasang di GitHub Pages dan di
 - Widget hari, tanggal, dan jam realtime.
 - Mode terang dan mode gelap yang tersimpan di perangkat.
 - Export PDF lewat dialog print browser dan export Excel `.xls`.
+- Logo resmi Markaz Dakwah Digital sebagai identitas aplikasi.
+- Visual dashboard 3D: hero logo, bar chart, donut progress, smartart pipeline, dan ikon modul 3D.
 
 ## Deploy ke GitHub Pages
 

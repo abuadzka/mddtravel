@@ -1,10 +1,11 @@
-const CACHE_NAME = "mddtravel-dashboard-v2";
+const CACHE_NAME = "mddtravel-dashboard-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./config.js",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./mdd-logo.png"
 ];
 
 self.addEventListener("install", (event) => {

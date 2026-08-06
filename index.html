@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1f4ed8">
   <title>MDD Travel Umrah Dashboard</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./mdd-logo.png" type="image/png">
   <style>
     :root {
       --ink: #122052;
@@ -63,16 +63,13 @@
 
     .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .brand-mark {
-      width: 46px;
-      height: 46px;
+      width: 52px;
+      height: 52px;
       border-radius: 8px;
-      display: grid;
-      place-items: center;
-      background: var(--gold);
-      color: var(--brand-3);
-      font-weight: 900;
-      letter-spacing: 0;
-      box-shadow: inset 0 -8px 0 rgba(16, 43, 117, .16);
+      object-fit: cover;
+      background: #020617;
+      box-shadow: 0 12px 28px rgba(0,0,0,.28), 0 0 0 1px rgba(240,199,94,.32);
+      transform: perspective(600px) rotateY(-10deg) rotateX(4deg);
     }
     .brand h1 { margin: 0; font-size: 17px; line-height: 1.1; }
     .brand p { margin: 3px 0 0; color: rgba(255,255,255,.76); font-size: 12px; }
@@ -213,6 +210,34 @@
     .metric .meta { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
     .metric strong { font-size: clamp(23px, 3vw, 32px); letter-spacing: 0; }
     .metric small { color: var(--muted); }
+    .metric-3d {
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .metric-3d::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 18% 12%, rgba(255,255,255,.78), transparent 28%),
+        linear-gradient(135deg, rgba(31,78,216,.12), rgba(216,169,40,.16));
+    }
+    .metric-3d::after {
+      content: "";
+      position: absolute;
+      right: -26px;
+      bottom: -34px;
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(216,169,40,.48), rgba(31,78,216,.14));
+      transform: rotate(28deg) skew(-8deg);
+      box-shadow: inset 12px 12px 26px rgba(255,255,255,.35), inset -18px -18px 26px rgba(16,43,117,.22);
+    }
+    .metric-3d:hover { transform: translateY(-4px) rotateX(2deg); box-shadow: 0 24px 60px rgba(31,78,216,.22); }
+    .metric-3d > * { position: relative; z-index: 1; }
     .tone-green { border-top: 4px solid var(--brand-2); }
     .tone-gold { border-top: 4px solid var(--gold); }
     .tone-rose { border-top: 4px solid var(--rose); }
@@ -303,6 +328,211 @@
     .price { font-size: 24px; font-weight: 900; color: var(--brand); }
     .features { display: grid; gap: 8px; color: var(--muted); font-size: 13px; margin: 0; padding: 0; list-style: none; }
 
+    .visual-hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 292px;
+      border-radius: 8px;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 84% 10%, rgba(240,199,94,.4), transparent 26%),
+        linear-gradient(135deg, #102b75 0%, #1f4ed8 48%, #071949 100%);
+      color: #fff;
+      box-shadow: 0 24px 70px rgba(31,78,216,.28);
+      display: grid;
+      grid-template-columns: minmax(220px, .8fr) minmax(280px, 1.2fr);
+      gap: 22px;
+      align-items: center;
+    }
+    .visual-hero::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .visual-brand-3d {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 244px;
+      perspective: 900px;
+    }
+    .visual-brand-3d img {
+      width: min(220px, 68vw);
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 28px;
+      transform: rotateY(-13deg) rotateX(7deg);
+      box-shadow: 0 34px 50px rgba(0,0,0,.35), 18px 18px 0 rgba(216,169,40,.26), -14px -14px 0 rgba(255,255,255,.1);
+    }
+    .orbital-ring {
+      position: absolute;
+      width: 260px;
+      height: 92px;
+      border: 2px solid rgba(240,199,94,.6);
+      border-radius: 50%;
+      transform: rotateX(68deg) rotateZ(-24deg);
+      box-shadow: 0 0 22px rgba(240,199,94,.24);
+    }
+    .hero-copy { position: relative; z-index: 1; display: grid; gap: 14px; }
+    .hero-copy h3 { margin: 0; font-size: clamp(25px, 4vw, 42px); line-height: 1; letter-spacing: 0; }
+    .hero-copy p { margin: 0; max-width: 720px; color: rgba(255,255,255,.8); line-height: 1.55; }
+    .hero-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-chip {
+      min-height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.16);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .visual-suite { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); gap: 14px; }
+    .visual-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 286px;
+      background: linear-gradient(145deg, var(--panel), var(--panel-2));
+      transform-style: preserve-3d;
+    }
+    .chart-3d {
+      height: 248px;
+      display: flex;
+      align-items: end;
+      gap: 18px;
+      padding: 22px 18px 46px;
+      perspective: 900px;
+    }
+    .bar-3d {
+      --h: 40%;
+      position: relative;
+      flex: 1;
+      min-width: 44px;
+      height: var(--h);
+      border-radius: 8px 8px 3px 3px;
+      background: linear-gradient(180deg, #5d86ff, var(--brand));
+      box-shadow: inset 10px 0 18px rgba(255,255,255,.22), inset -12px 0 18px rgba(16,43,117,.34), 0 18px 28px rgba(31,78,216,.22);
+      transform: rotateX(4deg) skewX(-5deg);
+    }
+    .bar-3d::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      right: -9px;
+      top: -11px;
+      height: 14px;
+      border-radius: 8px 8px 2px 2px;
+      background: linear-gradient(90deg, #91adff, #f0c75e);
+      transform: skewX(-34deg);
+    }
+    .bar-3d::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: -32px;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .bar-value {
+      position: absolute;
+      left: 50%;
+      top: -34px;
+      transform: translateX(-50%) skewX(5deg);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .donut-wrap {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 18px;
+      align-items: center;
+      min-height: 232px;
+    }
+    .donut-3d {
+      --p: 70;
+      width: 172px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold) calc(var(--p) * 1%), rgba(31,78,216,.18) 0);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 22px 34px rgba(31,78,216,.24), inset 10px 12px 24px rgba(255,255,255,.34), inset -16px -16px 28px rgba(16,43,117,.3);
+      transform: perspective(800px) rotateX(22deg);
+    }
+    .donut-3d::before {
+      content: "";
+      width: 102px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--panel);
+      box-shadow: inset 0 12px 24px rgba(16,43,117,.12);
+    }
+    .donut-label { position: absolute; font-weight: 950; font-size: 24px; color: var(--brand-2); }
+    .smartart-3d { display: grid; gap: 12px; }
+    .smart-node {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(145deg, var(--panel), var(--panel-2));
+      box-shadow: 10px 12px 0 rgba(31,78,216,.08), inset 0 1px 0 rgba(255,255,255,.55);
+      transform: perspective(900px) rotateY(-4deg);
+    }
+    .smart-icon {
+      width: 42px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(145deg, var(--brand), var(--brand-3));
+      box-shadow: inset 8px 8px 14px rgba(255,255,255,.18), inset -10px -10px 18px rgba(0,0,0,.2), 0 12px 18px rgba(31,78,216,.2);
+    }
+    .smart-node strong { font-size: 13px; }
+    .smart-node span { color: var(--muted); font-size: 12px; }
+    .smart-node .smart-value { color: var(--gold); font-weight: 950; font-size: 18px; }
+    .mini-cube-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .cube-icon {
+      min-height: 104px;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .cube-icon .cube {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(145deg, #5d86ff, var(--brand-3));
+      box-shadow: 8px 8px 0 rgba(216,169,40,.28), inset 9px 9px 14px rgba(255,255,255,.22), inset -11px -11px 18px rgba(0,0,0,.25);
+      transform: rotateX(10deg) rotateY(-18deg);
+    }
+    .cube-icon strong { font-size: 12px; }
+    body.dark .donut-3d::before { background: var(--panel); }
+
     .mobile-nav {
       position: fixed;
       left: 12px;
@@ -359,12 +589,14 @@
       .sidebar { display: none; }
       .mobile-nav { display: grid; }
       .main { padding: 18px 14px 94px; }
-      .stats, .three, .two, .package-list { grid-template-columns: 1fr; }
+      .stats, .three, .two, .package-list, .visual-hero, .visual-suite { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
       .actions { width: 100%; justify-content: stretch; }
       .actions .btn, .searchbar { flex: 1; max-width: none; }
       .form-grid { grid-template-columns: 1fr; }
       .panel-header { align-items: flex-start; flex-direction: column; }
+      .donut-wrap { grid-template-columns: 1fr; justify-items: center; }
+      .mini-cube-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       table { min-width: 680px; }
     }
   </style>
@@ -373,7 +605,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-mark">MDD</div>
+        <img class="brand-mark" src="./mdd-logo.png" alt="Logo Markaz Dakwah Digital">
         <div>
           <h1>MDD Travel Umrah</h1>
           <p>Realtime Agency Dashboard</p>
@@ -412,7 +644,41 @@
       </header>
 
       <section class="view active" data-view="dashboard">
+        <section class="visual-hero" aria-label="Visual utama dashboard MDD Travel">
+          <div class="visual-brand-3d">
+            <span class="orbital-ring"></span>
+            <img src="./mdd-logo.png" alt="Logo Markaz Dakwah Digital">
+          </div>
+          <div class="hero-copy">
+            <div class="hero-chip-row">
+              <span class="hero-chip">3D Realtime Dashboard</span>
+              <span class="hero-chip">Google Workspace Sync</span>
+              <span class="hero-chip">GitHub Pages PWA</span>
+            </div>
+            <h3>Command Center Umrah MDD Travel</h3>
+            <p>Ringkasan operasional, pipeline sales, manifest keberangkatan, pembayaran, paket, dan kesiapan jamaah divisualkan dalam tampilan 3D yang lebih premium.</p>
+            <div class="mini-cube-row" id="visualIconRow"></div>
+          </div>
+        </section>
         <div class="grid stats" id="metrics"></div>
+        <div class="visual-suite">
+          <section class="panel visual-panel">
+            <div class="panel-header"><h3>Chart 3D Performa Travel</h3><span class="pill info">Realtime</span></div>
+            <div class="chart-3d" id="barChart3d"></div>
+          </section>
+          <section class="panel visual-panel">
+            <div class="panel-header"><h3>Donut 3D Kesiapan Seat</h3><span class="pill ok" id="seatReadinessPill">0%</span></div>
+            <div class="panel-body">
+              <div class="donut-wrap">
+                <div style="position:relative;display:grid;place-items:center">
+                  <div class="donut-3d" id="seatDonut"></div>
+                  <div class="donut-label" id="seatDonutLabel">0%</div>
+                </div>
+                <div class="smartart-3d" id="smartArt3d"></div>
+              </div>
+            </div>
+          </section>
+        </div>
         <div class="grid three" id="dashboardReports"></div>
         <div class="grid two">
           <section class="panel">
@@ -602,6 +868,7 @@
     function render() {
       renderNav();
       renderMetrics();
+      renderVisual3D();
       renderDashboardReports();
       renderManifest();
       renderActivity();
@@ -626,10 +893,58 @@
         ["Lead Aktif", state.leads.length, "Pipeline sales berjalan", "tone-rose", "leads"]
       ];
       document.getElementById("metrics").innerHTML = data.map(([label, value, note, tone, target]) => `
-        <button class="panel metric ${tone}" data-open="${target}" style="text-align:left">
+        <button class="panel metric metric-3d ${tone}" data-open="${target}" style="text-align:left">
           <span class="meta"><span>${label}</span>${icons[target]}</span>
           <strong>${value}</strong>
           <small>${note}</small>
+        </button>`).join("");
+      document.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => switchView(el.dataset.open));
+    }
+
+    function renderVisual3D() {
+      const paid = state.payments.filter((p) => p.status === "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      const seats = state.bookings.reduce((s, b) => s + Number(b.seat || 0), 0);
+      const booked = state.bookings.reduce((s, b) => s + Number(b.booked || 0), 0);
+      const seatPct = Math.min(100, Math.round((booked / Math.max(seats, 1)) * 100));
+      const chartData = [
+        ["Leads", state.leads.length],
+        ["Jamaah", state.jamaah.length],
+        ["Booking", state.bookings.length],
+        ["Bayar", Math.max(1, Math.round(paid / 10000000))],
+        ["Paket", state.packages.length]
+      ];
+      const max = Math.max(...chartData.map((item) => item[1]), 1);
+      document.getElementById("barChart3d").innerHTML = chartData.map(([label, value]) => {
+        const height = Math.max(18, Math.round((value / max) * 88));
+        return `<div class="bar-3d" data-label="${label}" style="--h:${height}%"><span class="bar-value">${value}</span></div>`;
+      }).join("");
+      document.getElementById("seatDonut").style.setProperty("--p", seatPct);
+      document.getElementById("seatDonutLabel").textContent = `${seatPct}%`;
+      document.getElementById("seatReadinessPill").textContent = `${booked}/${seats} seat`;
+      const leadBooking = state.leads.filter((l) => l.stage === "Booking").length;
+      const docsOk = state.jamaah.filter((j) => j.docStatus === "Lengkap").length;
+      const activePackages = state.packages.filter((p) => p.status === "Aktif").length;
+      const smart = [
+        ["Leads", "Calon jamaah siap booking", leadBooking, "leads"],
+        ["Dokumen", "Jamaah lengkap berkas", docsOk, "jamaah"],
+        ["Paket", "Produk aktif dijual", activePackages, "packages"]
+      ];
+      document.getElementById("smartArt3d").innerHTML = smart.map(([title, note, value, target]) => `
+        <button class="smart-node" data-open="${target}">
+          <span class="smart-icon">${icons[target]}</span>
+          <span><strong>${title}</strong><span>${note}</span></span>
+          <span class="smart-value">${value}</span>
+        </button>`).join("");
+      const iconStats = [
+        ["jamaah", "Jamaah", state.jamaah.length],
+        ["booking", "Manifest", state.bookings.length],
+        ["payments", "Transaksi", state.payments.length],
+        ["packages", "Paket", state.packages.length]
+      ];
+      document.getElementById("visualIconRow").innerHTML = iconStats.map(([target, label, value]) => `
+        <button class="cube-icon" data-open="${target}">
+          <span class="cube">${icons[target]}</span>
+          <strong>${label}: ${value}</strong>
         </button>`).join("");
       document.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => switchView(el.dataset.open));
     }
@@ -654,7 +969,7 @@
         ["Kesiapan Operasi", `${state.itinerary.length} agenda`, `${state.bookings.length} keberangkatan sedang dipantau`, "booking"]
       ];
       document.getElementById("dashboardReports").innerHTML = reports.map(([title, value, note, target]) => `
-        <button class="panel metric tone-gold" data-open="${target}" style="text-align:left">
+        <button class="panel metric metric-3d tone-gold" data-open="${target}" style="text-align:left">
           <span class="meta"><span>${title}</span>${icons[target]}</span>
           <strong>${value}</strong>
           <small>${note}</small>
