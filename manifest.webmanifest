@@ -1,0 +1,19 @@
+{
+  "name": "MDD Travel Umrah Dashboard",
+  "short_name": "MDD Travel",
+  "description": "Dashboard realtime untuk travel agen Umrah MDD.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eff4ff",
+  "theme_color": "#1f4ed8",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

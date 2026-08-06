@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f4ed8">
+  <title>MDD Travel Umrah Dashboard</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --ink: #122052;
+      --muted: #5f6f99;
+      --paper: #eff4ff;
+      --panel: #ffffff;
+      --panel-2: #f7f9ff;
+      --brand: #1f4ed8;
+      --brand-2: #153a9f;
+      --brand-3: #102b75;
+      --gold: #d8a928;
+      --rose: #d05d6b;
+      --blue: #315fe4;
+      --line: #dce5ff;
+      --shadow: 0 18px 50px rgba(31, 78, 216, .15);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body.dark {
+      --ink: #f8fbff;
+      --muted: #b9c7f0;
+      --paper: #081740;
+      --panel: #10245d;
+      --panel-2: #0c1e52;
+      --brand: #315fe4;
+      --brand-2: #87a8ff;
+      --brand-3: #061235;
+      --gold: #f0c75e;
+      --rose: #ff8d98;
+      --blue: #87a8ff;
+      --line: rgba(255,255,255,.16);
+      --shadow: 0 18px 50px rgba(0, 0, 0, .32);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--paper); color: var(--ink); }
+    body { margin: 0; min-height: 100vh; overflow-x: hidden; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 280px 1fr; }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 18px;
+      background: linear-gradient(180deg, var(--brand) 0%, var(--brand-3) 100%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--brand-3);
+      font-weight: 900;
+      letter-spacing: 0;
+      box-shadow: inset 0 -8px 0 rgba(16, 43, 117, .16);
+    }
+    .brand h1 { margin: 0; font-size: 17px; line-height: 1.1; }
+    .brand p { margin: 3px 0 0; color: rgba(255,255,255,.76); font-size: 12px; }
+
+    .nav { display: grid; gap: 6px; }
+    .nav button {
+      width: 100%;
+      min-height: 42px;
+      border: 0;
+      border-radius: 8px;
+      color: rgba(255,255,255,.78);
+      background: transparent;
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      text-align: left;
+    }
+    .nav button[aria-current="page"] { background: rgba(255,255,255,.16); color: #fff; box-shadow: inset 3px 0 0 var(--gold); }
+    .nav svg, .icon { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .badge {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--brand-3);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: grid;
+      gap: 10px;
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+    }
+    .sync-card {
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); display: inline-block; }
+    .status-dot.online { background: #5cd685; }
+    .status-dot.offline { background: #e08574; }
+
+    .main { min-width: 0; padding: 22px 24px 98px; }
+    .topbar {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .page-title h2 { margin: 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: 0; }
+    .page-title p { margin: 5px 0 0; color: var(--muted); }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .clock-card {
+      min-height: 42px;
+      min-width: 172px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 12px;
+      background: var(--brand);
+      color: #ffffff;
+      display: grid;
+      align-content: center;
+      gap: 1px;
+    }
+    .clock-card strong { color: var(--gold); font-size: 15px; line-height: 1; }
+    .clock-card span { color: rgba(255,255,255,.82); font-size: 11px; }
+    .btn {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 13px;
+      background: var(--panel);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .btn.primary { background: var(--brand); color: #ffffff; border-color: var(--brand); }
+    .btn.gold { background: var(--gold); color: var(--brand-3); border-color: var(--gold); }
+    .btn.icon-only { width: 40px; padding: 0; justify-content: center; }
+    .btn:active { transform: translateY(1px); }
+
+    .searchbar {
+      flex: 1;
+      min-width: min(100%, 280px);
+      max-width: 520px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      background: var(--panel);
+    }
+    .searchbar input { border: 0; outline: 0; background: transparent; width: 100%; color: var(--ink); }
+
+    .view { display: none; }
+    .view.active { display: grid; gap: 18px; }
+    .grid { display: grid; gap: 14px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .two { grid-template-columns: minmax(0, 1.4fr) minmax(300px, .9fr); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .panel-header {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-header h3 { margin: 0; font-size: 15px; }
+    .panel-body { padding: 16px; }
+    .metric { padding: 16px; display: grid; gap: 12px; }
+    .metric .meta { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
+    .metric strong { font-size: clamp(23px, 3vw, 32px); letter-spacing: 0; }
+    .metric small { color: var(--muted); }
+    .tone-green { border-top: 4px solid var(--brand-2); }
+    .tone-gold { border-top: 4px solid var(--gold); }
+    .tone-rose { border-top: 4px solid var(--rose); }
+    .tone-blue { border-top: 4px solid var(--blue); }
+
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    th { font-size: 12px; color: var(--muted); font-weight: 800; background: var(--panel-2); }
+    td { font-size: 13px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #e8eeff;
+      color: #173274;
+      white-space: nowrap;
+    }
+    .pill.ok { background: #e2edff; color: #1644b7; }
+    .pill.warn { background: #fff1cb; color: #775717; }
+    .pill.bad { background: #f8ded9; color: #8a332a; }
+    .pill.info { background: #ddebf7; color: #26567a; }
+
+    .timeline { display: grid; gap: 10px; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+    .date-chip {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 850;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1;
+    }
+    .timeline-item strong { display: block; font-size: 13px; }
+    .timeline-item span { color: var(--muted); font-size: 12px; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 9px 11px;
+      outline: 0;
+    }
+    body.dark input, body.dark select, body.dark textarea {
+      background: #091a49;
+      color: var(--ink);
+    }
+    body.dark .pill { background: rgba(255,255,255,.12); color: #f8fbff; }
+    body.dark .pill.ok { background: rgba(135,168,255,.22); color: #dbe6ff; }
+    body.dark .pill.warn { background: rgba(240,199,94,.22); color: #ffe5a3; }
+    body.dark .pill.bad { background: rgba(255,141,152,.22); color: #ffc7cd; }
+    body.dark .pill.info { background: rgba(255,255,255,.14); color: #dbe6ff; }
+    textarea { resize: vertical; min-height: 86px; }
+    input:focus, select:focus, textarea:focus { border-color: var(--brand-2); box-shadow: 0 0 0 3px rgba(18, 116, 100, .12); }
+
+    .kanban { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 12px; overflow: auto; padding-bottom: 6px; }
+    .lane { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; min-height: 300px; }
+    .lane h4 { margin: 0; padding: 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .lead-card { margin: 10px; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 8px; }
+    .lead-card strong { font-size: 13px; }
+    .lead-card span { color: var(--muted); font-size: 12px; }
+
+    .package-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .package { padding: 16px; display: grid; gap: 12px; }
+    .package h4 { margin: 0; font-size: 17px; }
+    .price { font-size: 24px; font-weight: 900; color: var(--brand); }
+    .features { display: grid; gap: 8px; color: var(--muted); font-size: 13px; margin: 0; padding: 0; list-style: none; }
+
+    .mobile-nav {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      z-index: 20;
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      padding: 6px;
+      background: rgba(31, 78, 216, .96);
+      border-radius: 8px;
+      box-shadow: 0 12px 34px rgba(0,0,0,.24);
+    }
+    .mobile-nav button {
+      height: 48px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255,255,255,.72);
+      display: grid;
+      place-items: center;
+    }
+    .mobile-nav button[aria-current="page"] { background: rgba(255,255,255,.15); color: #fff; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(11, 28, 24, .48);
+    }
+    .modal.open { display: grid; }
+    .modal-dialog { width: min(720px, 100%); max-height: 92vh; overflow: auto; background: var(--panel); border-radius: 8px; box-shadow: 0 20px 80px rgba(0,0,0,.32); }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      display: none;
+      max-width: 360px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--brand);
+      box-shadow: var(--shadow);
+    }
+    .toast.show { display: block; }
+
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .mobile-nav { display: grid; }
+      .main { padding: 18px 14px 94px; }
+      .stats, .three, .two, .package-list { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .actions { width: 100%; justify-content: stretch; }
+      .actions .btn, .searchbar { flex: 1; max-width: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .panel-header { align-items: flex-start; flex-direction: column; }
+      table { min-width: 680px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">MDD</div>
+        <div>
+          <h1>MDD Travel Umrah</h1>
+          <p>Realtime Agency Dashboard</p>
+        </div>
+      </div>
+      <nav class="nav" id="sideNav"></nav>
+      <div class="sidebar-footer">
+        <div class="sync-card">
+          <div><span class="status-dot" id="syncDot"></span> <strong id="syncLabel">Mode lokal</strong></div>
+          <span id="syncInfo">Hubungkan Google Apps Script di config.js.</span>
+        </div>
+        <span>GitHub: abuadzka/mddtravel</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="page-title">
+          <h2 id="viewTitle">Dashboard</h2>
+          <p id="viewSubtitle">Pantau penjualan, jamaah, dokumen, dan pembayaran dalam satu tempat.</p>
+        </div>
+        <div class="actions">
+          <div class="clock-card" title="Waktu realtime">
+            <strong id="clockTime">--:--:--</strong>
+            <span id="clockDate">Memuat tanggal</span>
+          </div>
+          <div class="searchbar">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="globalSearch" placeholder="Cari jamaah, paket, invoice...">
+          </div>
+          <button class="btn icon-only" id="themeBtn" title="Mode terang/gelap"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg></button>
+          <button class="btn" id="pdfBtn" title="Export PDF"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 18h4"/></svg>PDF</button>
+          <button class="btn gold" id="excelBtn" title="Export Excel"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m8 13 4 4"/><path d="m12 13-4 4"/></svg>Excel</button>
+          <button class="btn primary" id="quickAddBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Tambah Data</button>
+        </div>
+      </header>
+
+      <section class="view active" data-view="dashboard">
+        <div class="grid stats" id="metrics"></div>
+        <div class="grid three" id="dashboardReports"></div>
+        <div class="grid two">
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Manifest Keberangkatan</h3>
+              <button class="btn" data-open="booking"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>Lihat Jadwal</button>
+            </div>
+            <div class="table-wrap"><table id="manifestTable"></table></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Aktivitas Realtime</h3><span class="pill info" id="lastSync">Belum sync</span></div>
+            <div class="panel-body"><div class="timeline" id="activityList"></div></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-view="leads">
+        <div class="panel">
+          <div class="panel-header"><h3>Pipeline Calon Jamaah</h3><button class="btn primary" data-add="lead">Tambah Lead</button></div>
+          <div class="panel-body"><div class="kanban" id="leadBoard"></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="jamaah">
+        <div class="panel">
+          <div class="panel-header"><h3>Database Jamaah</h3><button class="btn primary" data-add="jamaah">Tambah Jamaah</button></div>
+          <div class="table-wrap"><table id="jamaahTable"></table></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="booking">
+        <div class="grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Booking & Keberangkatan</h3><button class="btn primary" data-add="booking">Tambah Booking</button></div>
+            <div class="table-wrap"><table id="bookingTable"></table></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Rencana Perjalanan</h3><button class="btn" data-add="itinerary">Tambah Agenda</button></div>
+            <div class="panel-body"><div class="timeline" id="itineraryList"></div></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-view="payments">
+        <div class="grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Pembayaran</h3><button class="btn primary" data-add="payment">Catat Bayar</button></div>
+            <div class="table-wrap"><table id="paymentTable"></table></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Ringkasan Kas</h3><span class="pill ok">Akurat</span></div>
+            <div class="panel-body grid" id="cashSummary"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-view="packages">
+        <div class="panel">
+          <div class="panel-header"><h3>Paket Umrah</h3><button class="btn primary" data-add="package">Tambah Paket</button></div>
+          <div class="panel-body"><div class="package-list" id="packageList"></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="settings">
+        <div class="grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Integrasi Google Workspace</h3><span class="pill warn">Setup diperlukan</span></div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <label>Google Apps Script Web App URL<input id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"></label>
+                <label>Target GitHub Pages<input value="https://abuadzka.github.io/mddtravel/" readonly></label>
+              </div>
+              <p style="color:var(--muted);font-size:13px;line-height:1.55">Isi URL Apps Script di <strong>config.js</strong> setelah backend dideploy dari akun <strong>rizkifriends19@gmail.com</strong>. Dashboard akan otomatis berpindah dari mode lokal ke mode realtime.</p>
+              <button class="btn primary" id="saveConfigBtn">Simpan URL Lokal</button>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Tools Data</h3><span class="pill info">Plug and play</span></div>
+            <div class="panel-body grid">
+              <button class="btn" id="seedBtn">Muat Data Contoh</button>
+              <button class="btn" id="clearBtn">Kosongkan Data Lokal</button>
+              <button class="btn gold" id="syncNowBtn">Sync Sekarang</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" id="mobileNav"></nav>
+  <div class="modal" id="modal"><div class="modal-dialog" id="modalDialog"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="./config.js"></script>
+  <script>
+    const icons = {
+      dashboard: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+      leads: '<svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>',
+      jamaah: '<svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>',
+      booking: '<svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>',
+      payments: '<svg class="icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>',
+      packages: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>',
+      settings: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-.4-1.1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.31.33.52.73.6 1.2h.09a2 2 0 1 1 0 4H20a1.7 1.7 0 0 0-.6.8z"/></svg>'
+    };
+
+    const views = [
+      ["dashboard", "Dashboard", "Pantau penjualan, jamaah, dokumen, dan pembayaran dalam satu tempat."],
+      ["leads", "Leads", "Kelola pipeline calon jamaah dari tanya paket sampai booking."],
+      ["jamaah", "Jamaah", "Database jamaah, dokumen, kontak, dan status pelunasan."],
+      ["booking", "Booking", "Manifest keberangkatan, hotel, maskapai, dan itinerary."],
+      ["payments", "Pembayaran", "Invoice, DP, pelunasan, dan catatan kas travel."],
+      ["packages", "Paket", "Produk paket Umrah siap jual untuk admin dan sales."],
+      ["settings", "Setting", "Konfigurasi GitHub Pages dan Google Workspace."]
+    ];
+
+    const seed = {
+      leads: [
+        { id: crypto.randomUUID(), name: "Ahmad Fauzi", phone: "0812-3456-8811", source: "WhatsApp", stage: "Follow Up", package: "Umrah Reguler 12 Hari", note: "Minta jadwal September", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), name: "Siti Aminah", phone: "0821-9100-2288", source: "Instagram", stage: "Booking", package: "Umrah Plus Thaif", note: "DP besok pagi", updatedAt: new Date().toISOString() }
+      ],
+      jamaah: [
+        { id: crypto.randomUUID(), name: "Ahmad Fauzi", nik: "3273xxxxxxxx0001", phone: "0812-3456-8811", passport: "C1234567", docStatus: "Lengkap", paymentStatus: "DP", package: "Umrah Reguler 12 Hari", departure: "2026-09-21", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), name: "Siti Aminah", nik: "3174xxxxxxxx0002", phone: "0821-9100-2288", passport: "C7654321", docStatus: "Kurang Foto", paymentStatus: "Lunas", package: "Umrah Plus Thaif", departure: "2026-10-08", updatedAt: new Date().toISOString() }
+      ],
+      bookings: [
+        { id: crypto.randomUUID(), code: "MDD-260921", package: "Umrah Reguler 12 Hari", departure: "2026-09-21", airline: "Saudia", seat: 45, booked: 32, hotelMakkah: "Ajyad Grand", hotelMadinah: "Dallah Taibah", status: "Ready", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), code: "MDD-261008", package: "Umrah Plus Thaif", departure: "2026-10-08", airline: "Garuda", seat: 40, booked: 28, hotelMakkah: "Pullman Zamzam", hotelMadinah: "Nozol Royal", status: "Promo", updatedAt: new Date().toISOString() }
+      ],
+      payments: [
+        { id: crypto.randomUUID(), invoice: "INV-001", jamaah: "Ahmad Fauzi", type: "DP", amount: 7500000, method: "Transfer", status: "Terverifikasi", date: "2026-08-06", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), invoice: "INV-002", jamaah: "Siti Aminah", type: "Pelunasan", amount: 28500000, method: "Transfer", status: "Terverifikasi", date: "2026-08-05", updatedAt: new Date().toISOString() }
+      ],
+      packages: [
+        { id: crypto.randomUUID(), name: "Umrah Reguler 12 Hari", price: 31900000, quota: 45, includes: "Visa, hotel, tiket, handling, city tour", status: "Aktif", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), name: "Umrah Plus Thaif", price: 36900000, quota: 40, includes: "Program Thaif, hotel dekat Masjid, muthawwif", status: "Aktif", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), name: "Umrah Ramadan", price: 42900000, quota: 35, includes: "10 hari akhir Ramadan, buka puasa, tarawih", status: "Waiting List", updatedAt: new Date().toISOString() }
+      ],
+      itinerary: [
+        { id: crypto.randomUUID(), day: "H1", title: "Jakarta - Jeddah", detail: "Manasik singkat, check-in, penerbangan menuju Jeddah.", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), day: "H2", title: "Makkah", detail: "Umrah pertama dan pendampingan ibadah.", updatedAt: new Date().toISOString() },
+        { id: crypto.randomUUID(), day: "H7", title: "Madinah", detail: "Ziarah Raudhah, Uhud, Quba, dan Kebun Kurma.", updatedAt: new Date().toISOString() }
+      ],
+      activity: []
+    };
+
+    const storeKey = "mddtravel.dashboard.v1";
+    let state = loadState();
+    let currentView = "dashboard";
+    const savedTheme = localStorage.getItem("mddtravel.theme") || "light";
+    document.body.classList.toggle("dark", savedTheme === "dark");
+
+    function loadState() {
+      const saved = localStorage.getItem(storeKey);
+      if (saved) return JSON.parse(saved);
+      const copy = structuredClone(seed);
+      copy.activity = [{ id: crypto.randomUUID(), title: "Dashboard dibuat", detail: "Data contoh siap digunakan.", time: new Date().toISOString() }];
+      localStorage.setItem(storeKey, JSON.stringify(copy));
+      return copy;
+    }
+    function saveState() { localStorage.setItem(storeKey, JSON.stringify(state)); }
+    function rupiah(n) { return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(Number(n || 0)); }
+    function shortDate(v) { return v ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(v)) : "-"; }
+    function percent(value, total) { return total ? `${Math.round((value / total) * 100)}%` : "0%"; }
+    function toast(msg) { const el = document.getElementById("toast"); el.textContent = msg; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2800); }
+    function addActivity(title, detail) {
+      state.activity.unshift({ id: crypto.randomUUID(), title, detail, time: new Date().toISOString() });
+      state.activity = state.activity.slice(0, 20);
+    }
+
+    function renderNav() {
+      const side = document.getElementById("sideNav");
+      const mobile = document.getElementById("mobileNav");
+      side.innerHTML = views.map(([id, label]) => `<button data-view-target="${id}" aria-current="${id === currentView ? "page" : "false"}">${icons[id]}<span>${label}</span>${id === "leads" ? `<span class="badge">${state.leads.length}</span>` : ""}</button>`).join("");
+      mobile.innerHTML = views.slice(0,5).map(([id, label]) => `<button title="${label}" data-view-target="${id}" aria-current="${id === currentView ? "page" : "false"}">${icons[id]}</button>`).join("");
+      document.querySelectorAll("[data-view-target]").forEach((btn) => btn.onclick = () => switchView(btn.dataset.viewTarget));
+    }
+
+    function switchView(id) {
+      currentView = id;
+      document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.dataset.view === id));
+      const item = views.find((v) => v[0] === id);
+      document.getElementById("viewTitle").textContent = item[1];
+      document.getElementById("viewSubtitle").textContent = item[2];
+      render();
+    }
+
+    function render() {
+      renderNav();
+      renderMetrics();
+      renderDashboardReports();
+      renderManifest();
+      renderActivity();
+      renderLeads();
+      renderJamaah();
+      renderBooking();
+      renderPayments();
+      renderPackages();
+      renderSettings();
+      updateSyncState();
+    }
+
+    function renderMetrics() {
+      const paid = state.payments.filter((p) => p.status === "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      const seats = state.bookings.reduce((s, b) => s + Number(b.seat || 0), 0);
+      const booked = state.bookings.reduce((s, b) => s + Number(b.booked || 0), 0);
+      const docsOk = state.jamaah.filter((j) => j.docStatus === "Lengkap").length;
+      const data = [
+        ["Total Jamaah", state.jamaah.length, `${docsOk} dokumen lengkap`, "tone-green", "jamaah"],
+        ["Omzet Tercatat", rupiah(paid), `${state.payments.length} transaksi`, "tone-gold", "payments"],
+        ["Seat Terisi", `${booked}/${seats}`, `${seats - booked} seat tersedia`, "tone-blue", "booking"],
+        ["Lead Aktif", state.leads.length, "Pipeline sales berjalan", "tone-rose", "leads"]
+      ];
+      document.getElementById("metrics").innerHTML = data.map(([label, value, note, tone, target]) => `
+        <button class="panel metric ${tone}" data-open="${target}" style="text-align:left">
+          <span class="meta"><span>${label}</span>${icons[target]}</span>
+          <strong>${value}</strong>
+          <small>${note}</small>
+        </button>`).join("");
+      document.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => switchView(el.dataset.open));
+    }
+
+    function renderDashboardReports() {
+      const leadBooking = state.leads.filter((l) => l.stage === "Booking").length;
+      const leadFollowUp = state.leads.filter((l) => l.stage === "Follow Up").length;
+      const jamaahPaid = state.jamaah.filter((j) => /lunas/i.test(j.paymentStatus || "")).length;
+      const jamaahDocs = state.jamaah.filter((j) => /lengkap/i.test(j.docStatus || "")).length;
+      const seats = state.bookings.reduce((s, b) => s + Number(b.seat || 0), 0);
+      const booked = state.bookings.reduce((s, b) => s + Number(b.booked || 0), 0);
+      const verified = state.payments.filter((p) => p.status === "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      const pending = state.payments.filter((p) => p.status !== "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      const activePackages = state.packages.filter((p) => p.status === "Aktif").length;
+      const avgPackage = state.packages.length ? state.packages.reduce((s, p) => s + Number(p.price || 0), 0) / state.packages.length : 0;
+      const reports = [
+        ["Leads", `${leadBooking} booking`, `${leadFollowUp} follow up dari ${state.leads.length} lead aktif`, "leads"],
+        ["Jamaah", `${jamaahDocs}/${state.jamaah.length} dokumen`, `${jamaahPaid} jamaah lunas, ${state.jamaah.length - jamaahPaid} belum lunas`, "jamaah"],
+        ["Booking", percent(booked, seats), `${booked} seat terisi dari ${seats} total seat`, "booking"],
+        ["Pembayaran", rupiah(verified), `${rupiah(pending)} menunggu verifikasi`, "payments"],
+        ["Paket", `${activePackages} aktif`, `Rata-rata harga ${rupiah(avgPackage)}`, "packages"],
+        ["Kesiapan Operasi", `${state.itinerary.length} agenda`, `${state.bookings.length} keberangkatan sedang dipantau`, "booking"]
+      ];
+      document.getElementById("dashboardReports").innerHTML = reports.map(([title, value, note, target]) => `
+        <button class="panel metric tone-gold" data-open="${target}" style="text-align:left">
+          <span class="meta"><span>${title}</span>${icons[target]}</span>
+          <strong>${value}</strong>
+          <small>${note}</small>
+        </button>`).join("");
+      document.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => switchView(el.dataset.open));
+    }
+
+    function table(headers, rows) {
+      return `<thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
+    }
+    function statusPill(text) {
+      const t = String(text || "");
+      const cls = /lunas|lengkap|ready|aktif|terverifikasi/i.test(t) ? "ok" : /kurang|dp|promo|waiting/i.test(t) ? "warn" : "info";
+      return `<span class="pill ${cls}">${t || "-"}</span>`;
+    }
+    function renderManifest() {
+      document.getElementById("manifestTable").innerHTML = table(["Kode", "Paket", "Berangkat", "Maskapai", "Seat", "Status"], state.bookings.map((b) => [b.code, b.package, shortDate(b.departure), b.airline, `${b.booked}/${b.seat}`, statusPill(b.status)]));
+    }
+    function renderActivity() {
+      document.getElementById("activityList").innerHTML = state.activity.slice(0,8).map((a) => `<div class="timeline-item"><div class="date-chip">${new Date(a.time).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div><div><strong>${a.title}</strong><span>${a.detail}</span></div></div>`).join("");
+    }
+    function renderLeads() {
+      const stages = ["Baru", "Follow Up", "Booking", "Selesai"];
+      document.getElementById("leadBoard").innerHTML = stages.map((stage) => `<div class="lane"><h4>${stage}</h4>${state.leads.filter((l) => l.stage === stage).map((l) => `<div class="lead-card"><strong>${l.name}</strong><span>${l.phone} - ${l.source}</span><span>${l.package}</span><span>${l.note || ""}</span></div>`).join("")}</div>`).join("");
+    }
+    function renderJamaah() {
+      document.getElementById("jamaahTable").innerHTML = table(["Nama", "NIK", "HP", "Paspor", "Dokumen", "Bayar", "Paket", "Berangkat"], state.jamaah.map((j) => [j.name, j.nik, j.phone, j.passport, statusPill(j.docStatus), statusPill(j.paymentStatus), j.package, shortDate(j.departure)]));
+    }
+    function renderBooking() {
+      document.getElementById("bookingTable").innerHTML = table(["Kode", "Paket", "Tanggal", "Maskapai", "Hotel Makkah", "Hotel Madinah", "Seat"], state.bookings.map((b) => [b.code, b.package, shortDate(b.departure), b.airline, b.hotelMakkah, b.hotelMadinah, `${b.booked}/${b.seat}`]));
+      document.getElementById("itineraryList").innerHTML = state.itinerary.map((i) => `<div class="timeline-item"><div class="date-chip">${i.day}</div><div><strong>${i.title}</strong><span>${i.detail}</span></div></div>`).join("");
+    }
+    function renderPayments() {
+      document.getElementById("paymentTable").innerHTML = table(["Invoice", "Jamaah", "Jenis", "Nominal", "Metode", "Status", "Tanggal"], state.payments.map((p) => [p.invoice, p.jamaah, p.type, rupiah(p.amount), p.method, statusPill(p.status), shortDate(p.date)]));
+      const total = state.payments.reduce((s, p) => s + Number(p.amount || 0), 0);
+      const verified = state.payments.filter((p) => p.status === "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      document.getElementById("cashSummary").innerHTML = `
+        <div class="panel metric tone-green"><span class="meta">Terverifikasi</span><strong>${rupiah(verified)}</strong><small>Masuk pembukuan utama</small></div>
+        <div class="panel metric tone-gold"><span class="meta">Total Input</span><strong>${rupiah(total)}</strong><small>Termasuk pending verifikasi</small></div>`;
+    }
+    function renderPackages() {
+      document.getElementById("packageList").innerHTML = state.packages.map((p) => `<article class="panel package"><span class="pill ${p.status === "Aktif" ? "ok" : "warn"}">${p.status}</span><h4>${p.name}</h4><div class="price">${rupiah(p.price)}</div><ul class="features"><li>Kuota ${p.quota} jamaah</li><li>${p.includes}</li></ul></article>`).join("");
+    }
+    function renderSettings() {
+      document.getElementById("scriptUrlInput").value = localStorage.getItem("mddtravel.scriptUrl") || window.MDD_CONFIG.appsScriptUrl || "";
+    }
+
+    function openForm(type) {
+      const schema = {
+        lead: ["Tambah Lead", "leads", [["name","Nama"],["phone","HP"],["source","Sumber"],["stage","Stage","select:Baru|Follow Up|Booking|Selesai"],["package","Paket"],["note","Catatan","textarea"]]],
+        jamaah: ["Tambah Jamaah", "jamaah", [["name","Nama"],["nik","NIK"],["phone","HP"],["passport","Paspor"],["docStatus","Status Dokumen","select:Lengkap|Kurang Foto|Kurang Paspor|Proses"],["paymentStatus","Status Bayar","select:DP|Lunas|Belum Bayar"],["package","Paket"],["departure","Tanggal Berangkat","date"]]],
+        booking: ["Tambah Booking", "bookings", [["code","Kode"],["package","Paket"],["departure","Tanggal","date"],["airline","Maskapai"],["seat","Seat","number"],["booked","Terisi","number"],["hotelMakkah","Hotel Makkah"],["hotelMadinah","Hotel Madinah"],["status","Status","select:Ready|Promo|Waiting List"]]],
+        payment: ["Catat Pembayaran", "payments", [["invoice","Invoice"],["jamaah","Nama Jamaah"],["type","Jenis","select:DP|Pelunasan|Refund|Biaya Tambahan"],["amount","Nominal","number"],["method","Metode","select:Transfer|Cash|Virtual Account"],["status","Status","select:Terverifikasi|Pending|Ditolak"],["date","Tanggal","date"]]],
+        package: ["Tambah Paket", "packages", [["name","Nama Paket"],["price","Harga","number"],["quota","Kuota","number"],["includes","Include","textarea"],["status","Status","select:Aktif|Promo|Waiting List"]]],
+        itinerary: ["Tambah Agenda", "itinerary", [["day","Hari"],["title","Judul"],["detail","Detail","textarea"]]]
+      }[type || "lead"];
+      const [title, collection, fields] = schema;
+      const body = fields.map(([name, label, kind]) => {
+        if (kind && kind.startsWith("select:")) return `<label>${label}<select name="${name}">${kind.replace("select:","").split("|").map((v) => `<option>${v}</option>`).join("")}</select></label>`;
+        if (kind === "textarea") return `<label style="grid-column:1/-1">${label}<textarea name="${name}"></textarea></label>`;
+        return `<label>${label}<input name="${name}" type="${kind || "text"}"></label>`;
+      }).join("");
+      document.getElementById("modalDialog").innerHTML = `<form id="dataForm"><div class="panel-header"><h3>${title}</h3><button type="button" class="btn icon-only" id="closeModal"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="panel-body"><div class="form-grid">${body}</div><div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px"><button type="button" class="btn" id="cancelModal">Batal</button><button class="btn primary">Simpan</button></div></div></form>`;
+      document.getElementById("modal").classList.add("open");
+      document.getElementById("closeModal").onclick = closeModal;
+      document.getElementById("cancelModal").onclick = closeModal;
+      document.getElementById("dataForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const row = Object.fromEntries(new FormData(e.currentTarget).entries());
+        row.id = crypto.randomUUID();
+        row.updatedAt = new Date().toISOString();
+        state[collection].unshift(row);
+        addActivity(title, row.name || row.jamaah || row.package || row.title || row.invoice || "Data baru");
+        saveState();
+        closeModal();
+        render();
+        await syncData("push");
+        toast("Data tersimpan");
+      };
+    }
+    function closeModal() { document.getElementById("modal").classList.remove("open"); }
+
+    function appsScriptUrl() {
+      return localStorage.getItem("mddtravel.scriptUrl") || window.MDD_CONFIG.appsScriptUrl || "";
+    }
+    function updateSyncState() {
+      const online = Boolean(appsScriptUrl());
+      document.getElementById("syncDot").className = `status-dot ${online ? "online" : "offline"}`;
+      document.getElementById("syncLabel").textContent = online ? "Realtime aktif" : "Mode lokal";
+      document.getElementById("syncInfo").textContent = online ? "Data tersambung ke Google Sheets." : "Set URL Apps Script untuk sync.";
+    }
+    async function syncData(mode = "pull") {
+      const url = appsScriptUrl();
+      if (!url) return;
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: mode, payload: state, clientTime: new Date().toISOString() })
+        });
+        const json = await res.json();
+        if (json.ok && json.data && mode !== "push") {
+          state = json.data;
+          saveState();
+          render();
+        }
+        document.getElementById("lastSync").textContent = `Sync ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}`;
+      } catch (err) {
+        toast("Sync tertunda, data tetap aman di perangkat");
+      }
+    }
+
+    document.getElementById("quickAddBtn").onclick = () => openForm(currentView === "dashboard" ? "jamaah" : currentView.replace("packages","package").replace("payments","payment").replace("leads","lead"));
+    document.addEventListener("click", (e) => {
+      const add = e.target.closest("[data-add]");
+      if (add) openForm(add.dataset.add);
+    });
+    document.getElementById("modal").onclick = (e) => { if (e.target.id === "modal") closeModal(); };
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `mddtravel-data-${Date.now()}.json` });
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    function plainStatus(value) {
+      return String(value || "").replace(/<[^>]+>/g, "").trim();
+    }
+    function exportExcel() {
+      const sheets = {
+        Leads: state.leads,
+        Jamaah: state.jamaah,
+        Booking: state.bookings,
+        Pembayaran: state.payments,
+        Paket: state.packages,
+        Itinerary: state.itinerary,
+        Aktivitas: state.activity
+      };
+      const html = Object.entries(sheets).map(([name, rows]) => {
+        const headers = [...new Set(rows.flatMap((row) => Object.keys(row || {})))];
+        const head = headers.map((h) => `<th>${h}</th>`).join("");
+        const body = rows.map((row) => `<tr>${headers.map((h) => `<td>${row[h] == null ? "" : String(row[h]).replaceAll("&", "&amp;").replaceAll("<", "&lt;")}</td>`).join("")}</tr>`).join("");
+        return `<h2>${name}</h2><table border="1"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+      }).join("<br>");
+      const blob = new Blob([`<html><head><meta charset="utf-8"></head><body>${html}</body></html>`], { type: "application/vnd.ms-excel" });
+      const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `mddtravel-laporan-${Date.now()}.xls` });
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast("Excel berhasil dibuat");
+    }
+    function exportPdf() {
+      const paid = state.payments.filter((p) => p.status === "Terverifikasi").reduce((s, p) => s + Number(p.amount || 0), 0);
+      const rows = [
+        ["Total Leads", state.leads.length],
+        ["Total Jamaah", state.jamaah.length],
+        ["Total Booking", state.bookings.length],
+        ["Pembayaran Terverifikasi", rupiah(paid)],
+        ["Paket Aktif", state.packages.filter((p) => p.status === "Aktif").length]
+      ];
+      const win = window.open("", "_blank");
+      win.document.write(`
+        <html><head><title>Laporan MDD Travel</title><meta charset="utf-8">
+        <style>
+          body{font-family:Arial,sans-serif;color:#122052;margin:32px}
+          h1{color:#1f4ed8;margin-bottom:4px} h2{color:#1f4ed8;margin-top:28px}
+          .meta{color:#5f6f99;margin-bottom:24px}
+          table{width:100%;border-collapse:collapse;margin:12px 0 22px}
+          th,td{border:1px solid #dce5ff;padding:9px;text-align:left}
+          th{background:#eff4ff;color:#122052}.gold{color:#b8860b;font-weight:bold}
+        </style></head><body>
+        <h1>MDD Travel Umrah Dashboard</h1>
+        <div class="meta">Laporan dicetak ${new Date().toLocaleString("id-ID")}</div>
+        <h2>Ringkasan Utama</h2>
+        <table>${rows.map(([a,b]) => `<tr><th>${a}</th><td class="gold">${b}</td></tr>`).join("")}</table>
+        <h2>Manifest Keberangkatan</h2>
+        <table><tr><th>Kode</th><th>Paket</th><th>Berangkat</th><th>Seat</th><th>Status</th></tr>${state.bookings.map((b) => `<tr><td>${b.code || ""}</td><td>${b.package || ""}</td><td>${shortDate(b.departure)}</td><td>${b.booked || 0}/${b.seat || 0}</td><td>${plainStatus(b.status)}</td></tr>`).join("")}</table>
+        <h2>Pembayaran</h2>
+        <table><tr><th>Invoice</th><th>Jamaah</th><th>Nominal</th><th>Status</th></tr>${state.payments.map((p) => `<tr><td>${p.invoice || ""}</td><td>${p.jamaah || ""}</td><td>${rupiah(p.amount)}</td><td>${plainStatus(p.status)}</td></tr>`).join("")}</table>
+        </body></html>`);
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 250);
+    }
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clockTime").textContent = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      document.getElementById("clockDate").textContent = now.toLocaleDateString("id-ID", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+    }
+    document.getElementById("themeBtn").onclick = () => {
+      const dark = !document.body.classList.contains("dark");
+      document.body.classList.toggle("dark", dark);
+      localStorage.setItem("mddtravel.theme", dark ? "dark" : "light");
+      toast(dark ? "Mode gelap aktif" : "Mode terang aktif");
+    };
+    document.getElementById("pdfBtn").onclick = exportPdf;
+    document.getElementById("excelBtn").onclick = exportExcel;
+    document.getElementById("globalSearch").oninput = (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) return render();
+      const found = ["leads","jamaah","bookings","payments","packages"].flatMap((key) => state[key].filter((row) => JSON.stringify(row).toLowerCase().includes(q)).map((row) => ({ key, row })));
+      toast(found.length ? `${found.length} data ditemukan. Buka menu terkait untuk detail.` : "Tidak ada data cocok.");
+    };
+    document.getElementById("saveConfigBtn").onclick = () => {
+      localStorage.setItem("mddtravel.scriptUrl", document.getElementById("scriptUrlInput").value.trim());
+      updateSyncState();
+      toast("URL backend tersimpan di perangkat ini");
+    };
+    document.getElementById("seedBtn").onclick = () => { state = structuredClone(seed); addActivity("Data contoh dimuat ulang", "Dataset demo kembali seperti awal."); saveState(); render(); toast("Data contoh dimuat"); };
+    document.getElementById("clearBtn").onclick = () => { state = { leads: [], jamaah: [], bookings: [], payments: [], packages: [], itinerary: [], activity: [] }; saveState(); render(); toast("Data lokal dikosongkan"); };
+    document.getElementById("syncNowBtn").onclick = () => syncData("pull");
+
+    updateClock();
+    setInterval(updateClock, 1000);
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
+    render();
+    setInterval(() => syncData("pull"), window.MDD_CONFIG.syncIntervalMs || 15000);
+  </script>
+</body>
+</html>
