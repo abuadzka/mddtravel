@@ -1,9 +1,10 @@
-const CACHE_NAME = "mddtravel-dashboard-v3";
+const CACHE_NAME = "mddtravel-dashboard-v4";
 const ASSETS = [
   "./",
   "./index.html",
   "./config.js",
   "./manifest.webmanifest",
+  "./.nojekyll",
   "./icon.svg",
   "./mdd-logo.png"
 ];
