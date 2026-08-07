@@ -11,14 +11,8 @@
   "icons": [
     {
       "src": "mdd-logo.png",
-      "sizes": "1024x1024",
+      "sizes": "1254x1254",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
