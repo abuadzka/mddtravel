@@ -39,3 +39,8 @@ Dashboard realtime untuk travel agen Umrah, siap dipasang di GitHub Pages dan di
 9. Paste URL itu ke `config.js` pada field `appsScriptUrl`, lalu upload ulang ke GitHub.
 
 Dashboard tetap bisa dipakai tanpa backend karena data tersimpan di perangkat. Setelah `appsScriptUrl` aktif, data akan disinkronkan ke Google Sheets secara berkala.
+
+
+## Status deployment
+
+Redeploy dipicu ulang pada 7 Agustus 2026, 01:15 WIB untuk memastikan GitHub Pages menerbitkan versi 3D terbaru.
